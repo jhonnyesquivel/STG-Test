@@ -35,13 +35,29 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Order')
 BEGIN
     CREATE TABLE [Order] (
-        OrderId INT PRIMARY KEY,
-        UserId INT,
-        TotalAmount DECIMAL(10, 2),
-        CONSTRAINT FK_Order_User FOREIGN KEY (UserId) REFERENCES [User](UserId)
-    );
+    OrderId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT,
+    Freight DECIMAL(10, 2),
+    TotalAmount DECIMAL(10, 2),
+    CONSTRAINT FK_Order_User FOREIGN KEY (UserId) REFERENCES [User](UserId)
+);
 END
 GO
+
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'OrderItem')
+BEGIN
+    CREATE TABLE OrderItem (
+    ItemId INT IDENTITY(1,1) PRIMARY KEY,
+    OrderId INT,
+    AnimalId INT,
+    AnimalPrice DECIMAL(10, 2),
+    CONSTRAINT FK_OrderItem_Order FOREIGN KEY (OrderId) REFERENCES [Order](OrderId),
+    CONSTRAINT FK_OrderItem_Animal FOREIGN KEY (AnimalId) REFERENCES Animal(AnimalId)
+);
+END
+GO
+
 
 IF NOT EXISTS (SELECT * FROM Animal)
 BEGIN

@@ -1,7 +1,10 @@
-﻿namespace STG.Core.Services
+﻿using STG.Core.Entities;
+
+namespace STG.Core.Services
 {
     public interface IUserService
     {
-        Task<bool> ValidateCredentials(string username, string password);
+        Task<User> GetUser(string username, string password);
+        bool ValidateCredentials(User user, string password);
     }
 }

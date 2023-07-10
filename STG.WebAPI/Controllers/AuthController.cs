@@ -24,27 +24,22 @@ namespace STG.WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            if (!await IsValidUser(model.Username, model.Password))
+            var user = await _userService.GetUser(model.Username, model.Password);
+            if (!_userService.ValidateCredentials(user, model.Password))
             {
                 return Unauthorized();
             }
 
-            var token = GenerateJwtToken(model.Username);
+            var token = GenerateJwtToken(model.Username, user.UserId);
 
             return Ok(new { token });
         }
 
-        private async Task<bool> IsValidUser(string username, string password)
-        {
-            return await _userService.ValidateCredentials(username, password);
-        }
-
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(string username, int userId)
         {
             var secretKey = _configuration.GetValue<string>("JwtSettings:SecretKey");
             var issuer = _configuration.GetValue<string>("JwtSettings:Issuer");
             var audience = _configuration.GetValue<string>("JwtSettings:Audience");
-                
 
             var key = Encoding.ASCII.GetBytes(secretKey!);
 
@@ -53,6 +48,7 @@ namespace STG.WebAPI.Controllers
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(5),
                 Issuer = issuer,

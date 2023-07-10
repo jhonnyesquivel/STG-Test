@@ -66,7 +66,7 @@ namespace STG.Infrastructure.Repository
             return result.ToDictionary(row => (string)row.Sex, row => (int)row.Count);
         }
 
-        public async Task<List<Animal>> FilterAnimals(string? animalId, string? name, string? sex, string? status)
+        public async Task<List<Animal>> FilterAnimals(int? animalId = null, string? name = null, string? sex = null, string? status = null)
         {
             using var connection = new SqlConnection(_connectionString);
             connection.Open();

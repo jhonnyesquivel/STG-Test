@@ -1,4 +1,5 @@
-﻿using STG.Core.Repository;
+﻿using STG.Core.Entities;
+using STG.Core.Repository;
 using STG.Core.Services;
 
 namespace STG.Application
@@ -12,15 +13,14 @@ namespace STG.Application
             _userRepository = userRepository;
         }
 
-        public async Task<bool> ValidateCredentials(string username, string password)
+        public async Task<User> GetUser(string username, string password)
         {
             var user = await _userRepository.GetUserByUsername(username);
-            if (user == null)
-            {
-                return false;
-            }
+            return user;
+        }
 
-            //return PasswordHasher.VerifyPassword(password, user.Password);
+        public bool ValidateCredentials(User user, string password)
+        {
             return password == user.Password;
         }
     }

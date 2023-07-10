@@ -7,10 +7,12 @@ namespace STG.Application
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IAnimalRepository _animalRepository;
 
-        public OrderService(IOrderRepository orderRepository, IAnimalService animalService)
+        public OrderService(IOrderRepository orderRepository, IAnimalService animalService, IAnimalRepository animalRepository)
         {
             _orderRepository = orderRepository;
+            _animalRepository = animalRepository;
         }
 
         public async Task<Order> PlaceOrder(Order order)
@@ -26,11 +28,13 @@ namespace STG.Application
             return await _orderRepository.IsAnimalAlreadyInOrder(orderId, animalId);
         }
 
-        private static void CalculateOrderTotalAmount(Order order)
+        private async void CalculateOrderTotalAmount(Order order)
         {
             decimal totalAmount = 0;
-            foreach (var animal in order.Animals)
+            foreach (var item in order.Items)
             {
+                var animal = (await _animalRepository.FilterAnimals(item.AnimalId).ConfigureAwait(false)).First();
+                item.AnimalPrice = animal.Price;
                 totalAmount += animal.Price;
             }
             order.TotalAmount = totalAmount;
@@ -38,7 +42,7 @@ namespace STG.Application
 
         private static void ApplyDiscountsAndFreight(Order order)
         {
-            int totalQuantity = order.Animals.Count;
+            int totalQuantity = order.Items.Count;
             decimal totalAmount = order.TotalAmount;
 
             if (totalQuantity > 50)

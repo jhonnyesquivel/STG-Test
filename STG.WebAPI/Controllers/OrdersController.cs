@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using STG.Core.Entities;
 using STG.Core.Services;
+using System.Security.Claims;
 
 namespace STG.WebAPI.Controllers
 {
@@ -20,12 +21,14 @@ namespace STG.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder([FromBody] Order order)
         {
-            if (order.Animals.Count > 50)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (order.Items.Count > 50)
             {
                 return BadRequest("The number of animals cannot be greater than 50.");
             }
 
-            foreach (var animal in order.Animals)
+            foreach (var animal in order.Items)
             {
                 if (await _orderService.IsAnimalAlreadyInOrder(order.OrderId, animal.AnimalId))
                 {
@@ -33,7 +36,7 @@ namespace STG.WebAPI.Controllers
                 }
             }
 
-            var placedOrder = _orderService.PlaceOrder(order);
+            var placedOrder = await _orderService.PlaceOrder(order);
             return Ok(placedOrder);
         }
     }

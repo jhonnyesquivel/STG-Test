@@ -38,7 +38,7 @@ namespace STG.Application
             return await _animalRepository.GetAnimalCountsBySex();
         }
 
-        public async Task<List<Animal>> FilterAnimals(string? animalId, string? name, string? sex, string? status)
+        public async Task<List<Animal>> FilterAnimals(int? animalId, string? name, string? sex, string? status)
         {
             return await _animalRepository.FilterAnimals(animalId, name, sex, status);
         }

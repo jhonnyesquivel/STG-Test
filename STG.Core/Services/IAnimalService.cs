@@ -9,6 +9,6 @@ namespace STG.Core.Services
         Task DeleteAnimal(int animalId);
         Task<List<Animal>> GetAnimalsOlderThanTwoYearsAndFemaleSortedByName();
         Task<Dictionary<string, int>> GetAnimalCountsBySex();
-        Task<List<Animal>> FilterAnimals(string? animalId, string? name, string? sex, string? status);
+        Task<List<Animal>> FilterAnimals(int? animalId, string? name, string? sex, string? status);
     }
 }

@@ -44,9 +44,15 @@ namespace STG.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FilterAnimals([FromQuery] string? animalId, [FromQuery] string? name, [FromQuery] string? sex, [FromQuery] string? status)
+        public async Task<IActionResult> FilterAnimals([FromQuery] int? animalId, [FromQuery] string? name, [FromQuery] string? sex, [FromQuery] string? status)
         {
             var animals = await _animalService.FilterAnimals(animalId, name, sex, status);
+
+            if (animals.Count == 0)
+            {
+                return NotFound();
+            }
+
             return Ok(animals);
         }
     }
